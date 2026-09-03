@@ -1,0 +1,581 @@
+<!-- Yeah, this page is made by deepseek -->
+<!-- 确实，这是 AI 帮我写的玩意 -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PARTICULA — A Granular-Cloud Signal Engine</title>
+<meta name="description" content="PARTICULA by I Am Plugins is a granular-cloud signal engine: it records your input, scatters it into particles that are time-stretched and pitch/frequency-shifted by an LFO, then writes them back into an abstract, gritty texture. CLAP · Windows · MPL-2.0 · v0.1.0." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Space+Mono:wght@400;700&family=Noto+Serif+SC:wght@500;600&family=Noto+Sans+SC:wght@400;500&family=Noto+Sans+Mono+SC:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#050505;
+    --bg-soft:#0a0a0b;
+    --panel:#0d0d0f;
+    --line:rgba(255,255,255,.14);
+    --line-soft:rgba(255,255,255,.08);
+    --txt:#e9e9e9;
+    --txt-dim:#9a9a9a;
+    --txt-faint:#5c5c5c;
+    --accent:#ffffff;
+    --mono:'Space Mono','Noto Sans Mono SC',ui-monospace,Menlo,'Microsoft YaHei',monospace;
+    --serif:'Cormorant Garamond','Noto Serif SC',Georgia,'Songti SC','SimSun',serif;
+    --sans:'Inter','Noto Sans SC',system-ui,'Microsoft YaHei',sans-serif;
+    --maxw:1180px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg);
+    color:var(--txt);
+    font-family:var(--mono);
+    line-height:1.7;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  ::selection{background:#fff;color:#000}
+
+  /* ambient film grain */
+  body::before{
+    content:"";
+    position:fixed;inset:0;z-index:0;pointer-events:none;
+    background-image:radial-gradient(rgba(255,255,255,.035) 1px,transparent 1px);
+    background-size:3px 3px;opacity:.5;mix-blend-mode:overlay;
+  }
+
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 32px;position:relative;z-index:1}
+
+  /* ---------- Header ---------- */
+  header.site{
+    position:fixed;top:0;left:0;right:0;z-index:50;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:20px 32px;
+    background:linear-gradient(to bottom,rgba(5,5,5,.92),rgba(5,5,5,0));
+    backdrop-filter:blur(6px);
+  }
+  .header-right{display:flex;align-items:center;gap:22px}
+  .brand{display:flex;align-items:center;gap:16px;cursor:pointer}
+  .brand .glyph{width:30px;height:30px;border-radius:50%;border:1px solid var(--txt);display:grid;place-items:center}
+  .brand .glyph::after{content:"";width:6px;height:6px;border-radius:50%;background:var(--txt)}
+  .brand .word{font-family:var(--serif);font-size:24px;letter-spacing:.34em;font-weight:500;text-transform:uppercase}
+  nav.menu{display:flex;gap:28px;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--txt-dim)}
+  nav.menu a{position:relative;padding:4px 0;transition:color .3s}
+  nav.menu a::after{content:"";position:absolute;left:0;bottom:0;width:0;height:1px;background:#fff;transition:width .3s}
+  nav.menu a:hover{color:#fff}
+  nav.menu a:hover::after{width:100%}
+  .lang-switch{display:flex;border:1px solid var(--line-soft)}
+  .lang-btn{font-family:var(--mono);font-size:11px;letter-spacing:.1em;padding:7px 12px;background:transparent;color:var(--txt-dim);border:0;cursor:pointer;transition:.2s}
+  .lang-btn.on{background:#fff;color:#000}
+  .cta-btn{
+    font-size:12px;letter-spacing:.16em;text-transform:uppercase;
+    border:1px solid var(--txt);color:#fff;padding:11px 18px;background:transparent;
+    cursor:pointer;transition:.25s;white-space:nowrap;
+  }
+  .cta-btn:hover{background:#fff;color:#000}
+  @media(max-width:800px){nav.menu{display:none}}
+  @media(max-width:520px){.cta-btn{display:none}}
+
+  /* ---------- Hero ---------- */
+  .hero{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden}
+  #viz{position:absolute;inset:0;width:100%;height:100%;z-index:0}
+  .hero-content{position:relative;z-index:2;text-align:center;padding:120px 20px 40px}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.34em;text-transform:uppercase;color:var(--txt-dim);margin-bottom:26px}
+  .hero h1{font-family:var(--serif);font-weight:500;font-size:clamp(46px,10vw,120px);line-height:.95;letter-spacing:.08em;text-transform:uppercase;text-shadow:0 0 60px rgba(255,255,255,.12)}
+  .hero .subtitle{margin-top:26px;font-size:clamp(13px,1.9vw,17px);letter-spacing:.04em;color:var(--txt-dim)}
+  .hero .byline{margin-top:14px;font-size:12.5px;color:var(--txt-faint);letter-spacing:.04em}
+  .hero-cta{margin-top:44px;display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+  .btn{font-family:var(--mono);font-size:13px;letter-spacing:.16em;text-transform:uppercase;padding:15px 30px;cursor:pointer;transition:.25s;border:1px solid var(--txt)}
+  .btn.solid{background:#fff;color:#000;border-color:#fff}
+  .btn.solid:hover{background:transparent;color:#fff}
+  .btn.ghost{background:transparent;color:#fff}
+  .btn.ghost:hover{background:#fff;color:#000}
+  .scroll-hint{position:absolute;bottom:30px;left:50%;transform:translateX(-50%);z-index:2;font-family:var(--mono);font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--txt-faint);display:flex;flex-direction:column;align-items:center;gap:10px}
+  .scroll-hint .line{width:1px;height:46px;background:linear-gradient(to bottom,var(--txt-dim),transparent);animation:drop 2.2s ease-in-out infinite}
+  @keyframes drop{0%{transform:scaleY(0);transform-origin:top}55%{transform:scaleY(1);transform-origin:top}100%{transform:scaleY(0);transform-origin:bottom}}
+
+  /* ---------- Stats ---------- */
+  .stats{background:var(--bg-soft);border-top:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft)}
+  .stats .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line-soft)}
+  .stat{padding:34px 24px;text-align:center;background:var(--bg)}
+  .stat .v{font-size:clamp(20px,2.8vw,32px);color:#fff;letter-spacing:.04em}
+  .stat .l{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--txt-dim);margin-top:8px}
+  @media(max-width:720px){.stats .grid{grid-template-columns:repeat(2,1fr)}}
+
+  /* ---------- Sections ---------- */
+  section{padding:110px 0}
+  .sec-head{max-width:680px;margin-bottom:64px}
+  .sec-tag{font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:var(--txt-dim);margin-bottom:18px;display:flex;align-items:center;gap:12px}
+  .sec-tag::before{content:"";width:26px;height:1px;background:var(--txt-dim)}
+  .sec-head h2{font-family:var(--serif);font-weight:500;font-size:clamp(30px,4.5vw,50px);letter-spacing:.02em;text-transform:uppercase}
+  .sec-head p{margin-top:16px;color:var(--txt-dim);font-size:14.5px}
+
+  /* ---------- Features ---------- */
+  .features{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .feature{border:1px solid var(--line);background:linear-gradient(180deg,var(--panel),#080809);padding:34px 30px;position:relative;transition:.35s;overflow:hidden}
+  .feature::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:transparent;transition:.35s}
+  .feature:hover{border-color:rgba(255,255,255,.35);transform:translateY(-4px)}
+  .feature:hover::before{background:#fff}
+  .feature .num{font-size:11px;letter-spacing:.2em;color:var(--txt-faint)}
+  .feature h3{font-family:var(--serif);font-weight:500;font-size:25px;letter-spacing:.04em;text-transform:uppercase;margin-top:20px}
+  .feature p{margin-top:14px;color:var(--txt-dim);font-size:13.5px}
+  .feature .k{margin-top:22px;padding-top:18px;border-top:1px solid var(--line-soft);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--txt-faint);display:flex;flex-wrap:wrap;gap:8px}
+  .feature .k span{border:1px solid var(--line-soft);padding:5px 9px;border-radius:2px}
+  @media(max-width:880px){.features{grid-template-columns:1fr}}
+
+  /* ---------- Module panels ---------- */
+  .modules{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}
+  .panel{border:1px solid var(--line);background:var(--panel);padding:26px 26px 30px}
+  .panel .head{display:flex;align-items:center;gap:14px;margin-bottom:22px}
+  .tabs{display:flex;gap:6px;font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:var(--txt-dim)}
+  .tab{border:1px solid var(--line-soft);padding:5px 11px;cursor:default;transition:.2s}
+  .tab.on{background:#fff;color:#000;border-color:#fff}
+  .panel .head .name{font-family:var(--serif);font-size:22px;letter-spacing:.1em;text-transform:uppercase;margin-left:6px}
+  .panel .head .name .dot{color:var(--txt-faint);font-size:14px}
+  .row{display:grid;grid-template-columns:110px 1fr 76px;align-items:center;gap:16px;padding:15px 0;border-top:1px solid var(--line-soft);font-size:14px}
+  .row:last-child{border-bottom:1px solid var(--line-soft)}
+  .row .lab{font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:var(--txt-dim);text-transform:uppercase}
+  .row .val{font-family:var(--mono);font-size:13px;color:#fff;text-align:right}
+  .toggle{display:flex;justify-content:space-between;align-items:center;padding:15px 0;border-top:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft);font-size:14px}
+  .toggle .lab{font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:var(--txt-dim);text-transform:uppercase}
+  .switch{width:74px;height:26px;border:1px solid var(--line);position:relative;border-radius:2px;overflow:hidden}
+  .switch .knob{position:absolute;top:1px;bottom:1px;width:50%;background:#fff;transition:.3s;left:calc(50% - 1px)}
+  .switch .seg{position:absolute;top:50%;transform:translateY(-50%);font-family:var(--mono);font-size:8px;letter-spacing:.12em;color:var(--txt-faint)}
+  .switch .seg.o{left:7px}.switch .seg.n{right:7px}
+  .slider{height:26px;display:flex;align-items:center;cursor:default;position:relative}
+  .slider .track{height:1px;width:100%;background:var(--line);position:relative}
+  .slider .fill{position:absolute;left:0;height:1px;background:#fff}
+  .slider .dot{position:absolute;top:50%;width:9px;height:9px;background:#fff;border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 0 0 3px rgba(255,255,255,.12)}
+  .mode-tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:2px}
+  .mode-tabs .m{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--txt-dim);border:1px solid var(--line-soft);text-align:center;padding:9px 0;text-transform:uppercase;transition:.2s}
+  .mode-tabs .m.on{background:#fff;color:#000;border-color:#fff}
+  @media(max-width:840px){.modules{grid-template-columns:1fr}}
+
+  /* ---------- Engine split ---------- */
+  .engine{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+  .engine .txt h2{font-family:var(--serif);font-weight:500;font-size:clamp(28px,4vw,44px);letter-spacing:.02em;text-transform:uppercase}
+  .engine .txt p{margin-top:22px;color:var(--txt-dim);font-size:14px}
+  .engine .txt .spec{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:34px}
+  .spec .item{border-left:2px solid var(--line);padding:4px 0 4px 18px}
+  .spec .item b{font-family:var(--mono);font-size:17px;color:#fff;font-weight:400}
+  .spec .item span{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--txt-dim);margin-top:5px}
+  .engine .canvas-box{border:1px solid var(--line);background:#080809;aspect-ratio:1/1;position:relative;overflow:hidden}
+  .engine .canvas-box canvas{position:absolute;inset:0;width:100%;height:100%}
+  .engine .badge{position:absolute;bottom:14px;left:14px;font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--txt-dim);text-transform:uppercase}
+  @media(max-width:880px){.engine{grid-template-columns:1fr;gap:40px}}
+
+  /* ---------- CTA ---------- */
+  .cta{text-align:center}
+  .cta h2{font-family:var(--serif);font-weight:500;font-size:clamp(32px,5vw,58px);letter-spacing:.04em;text-transform:uppercase}
+  .cta p{color:var(--txt-dim);margin-top:18px;font-size:13.5px;letter-spacing:.06em}
+  .cta .price{margin-top:16px;font-size:12px;letter-spacing:.06em;color:var(--txt-faint)}
+  .cta .btns{margin-top:38px;display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+
+  /* ---------- Footer ---------- */
+  footer{border-top:1px solid var(--line-soft);padding:40px 0;background:var(--bg-soft)}
+  footer .foot{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--txt-faint)}
+  footer .foot .left{display:flex;gap:22px;flex-wrap:wrap}
+  footer .foot a:hover{color:#fff}
+
+  /* reveal */
+  .reveal{opacity:0;transform:translateY(28px);transition:opacity .8s cubic-bezier(.16,1,.3,1),transform .8s cubic-bezier(.16,1,.3,1)}
+  .reveal.in{opacity:1;transform:none}
+
+  @media(max-width:600px){.wrap{padding:0 20px}.row{grid-template-columns:80px 1fr 62px}}
+</style>
+</head>
+<body>
+
+<!-- ===== Header ===== -->
+<header class="site">
+  <div class="brand" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+    <span class="glyph"></span>
+    <span class="word">Particula</span>
+  </div>
+  <div class="header-right">
+    <nav class="menu">
+      <a href="#engine" data-i18n="nav.engine">Engine</a>
+      <a href="#modules" data-i18n="nav.modules">Modules</a>
+      <a href="#features" data-i18n="nav.features">Features</a>
+    </nav>
+    <div class="lang-switch">
+      <button class="lang-btn on" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">中文</button>
+    </div>
+    <a href="https://github.com/IAMMRGODIE/Particula" target="_blank" rel="noopener" class="cta-btn" data-i18n="nav.get">Get Particula</a>
+  </div>
+</header>
+
+<!-- ===== Hero ===== -->
+<section class="hero">
+  <canvas id="viz"></canvas>
+  <div class="hero-content">
+    <div class="eyebrow reveal in" data-i18n="hero.eyebrow">A Granular-Cloud Signal Engine</div>
+    <h1 class="reveal in">Particula</h1>
+    <p class="subtitle reveal in" data-i18n="hero.sub">Record a sound, scatter it into particles, and reshape it into dirt.</p>
+    <p class="byline reveal in" data-i18n="hero.byline">a granular-cloud signal engine · by I Am Plugins — version 0.1.0</p>
+    <div class="hero-cta reveal in">
+      <a href="#engine" class="btn solid" data-i18n="hero.cta1">Explore the Engine</a>
+      <a href="#features" class="btn ghost" data-i18n="hero.cta2">Features</a>
+    </div>
+  </div>
+  <div class="scroll-hint"><span data-i18n="hero.scroll">Scroll</span><span class="line"></span></div>
+</section>
+
+<!-- ===== Stats ===== -->
+<div class="stats">
+  <div class="grid">
+    <div class="stat"><div class="v">CLAP</div><div class="l" data-i18n="stat.1">Plugin Format</div></div>
+    <div class="stat"><div class="v">Win</div><div class="l" data-i18n="stat.2">Windows Only</div></div>
+    <div class="stat"><div class="v">MPL-2.0</div><div class="l" data-i18n="stat.3">Open Source · GitHub</div></div>
+    <div class="stat"><div class="v">v0.1.0</div><div class="l" data-i18n="stat.4">First Release</div></div>
+  </div>
+</div>
+
+<!-- ===== Engine ===== -->
+<section id="engine">
+  <div class="wrap">
+    <div class="engine">
+      <div class="txt reveal">
+        <div class="sec-tag">The Engine</div>
+        <h2 data-i18n="eng.h2">Record it. Scatter it. Get dirt.</h2>
+        <p data-i18n="eng.p1">PARTICULA is a granular-cloud signal engine. It records whatever you feed it, then plays a wandering playhead back through that recording as a cloud of particles. Every grain is time-stretched — a fixed value — while its pitch and frequency are bent by an LFO. And each particle is written back into the history, so the cloud feeds on itself and grows into an abstract, gritty texture.</p>
+        <p data-i18n="eng.p2">Particles are fired at a set interval, drawn from a pool, and given a random lifetime. No two runs are ever the same — and that's the point. This is a tool built for random sounds and experimental sound design.</p>
+        <div class="spec">
+          <div class="item"><b>LIVE</b><span data-i18n="eng.s1">Real-time grain counter</span></div>
+          <div class="item"><b>SPAWNED</b><span data-i18n="eng.s2">Particles in the cloud</span></div>
+          <div class="item"><b>WET / DRY</b><span data-i18n="eng.s3">Full mix control</span></div>
+          <div class="item"><b>ON</b><span data-i18n="eng.s4">Instant activation</span></div>
+        </div>
+      </div>
+      <div class="canvas-box reveal">
+        <canvas id="engineViz"></canvas>
+        <span class="badge" data-i18n="eng.badge">LIVE · PARTICLE CLOUD</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Modules ===== -->
+<section id="modules" style="padding-top:40px">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="sec-tag">Modules</div>
+      <h2 data-i18n="mod.h2">How the cloud is born & moves</h2>
+      <p data-i18n="mod.p">Two modules govern the grain cloud. Spawn decides when particles fire and how many live; Movement decides where each particle sits and drifts.</p>
+    </div>
+
+    <div class="modules">
+      <!-- I · SPAWN -->
+      <div class="panel reveal">
+        <div class="head">
+          <div class="tabs"><span class="tab on">I</span><span class="tab">II</span><span class="tab">III</span></div>
+          <div class="name">I <span class="dot">·</span> SPAWN</div>
+        </div>
+        <div class="toggle">
+          <span class="lab">Sync</span>
+          <div class="switch on"><span class="seg o">OFF</span><span class="knob"></span><span class="seg n">ON</span></div>
+        </div>
+        <div class="row"><span class="lab">Interval</span>
+          <div class="slider"><div class="track"><div class="fill" style="width:43%"></div><div class="dot" style="left:43%"></div></div></div>
+          <span class="val">30.00</span></div>
+        <div class="row"><span class="lab">Fallback</span>
+          <div class="slider"><div class="track"><div class="fill" style="width:60%"></div><div class="dot" style="left:60%"></div></div></div>
+          <span class="val">120.00</span></div>
+        <div class="row"><span class="lab">Pool</span>
+          <div class="slider"><div class="track"><div class="fill" style="width:52%"></div><div class="dot" style="left:52%"></div></div></div>
+          <span class="val">64.00</span></div>
+        <div class="row"><span class="lab">Reverse</span>
+          <div class="slider"><div class="track"><div class="fill" style="width:16%"></div><div class="dot" style="left:16%"></div></div></div>
+          <span class="val">0.00</span></div>
+      </div>
+
+      <!-- I · MOVEMENT -->
+      <div class="panel reveal">
+        <div class="head">
+          <div class="tabs"><span class="tab on">I</span><span class="tab">II</span><span class="tab">III</span></div>
+          <div class="name">I <span class="dot">·</span> MOVEMENT</div>
+        </div>
+        <div class="row" style="border:0;padding-top:0">
+          <span class="lab">Mode</span>
+          <div class="mode-tabs" style="grid-column:2/4">
+            <span class="m">Fixed</span><span class="m on">LFO</span><span class="m">Walk</span><span class="m">Peak</span>
+          </div>
+        </div>
+        <div class="row"><span class="lab">Smooth</span>
+          <div class="slider"><div class="track"><div class="fill" style="width:47%"></div><div class="dot" style="left:47%"></div></div></div>
+          <span class="val">20.00</span></div>
+        <div class="row"><span class="lab">LFO Rate</span>
+          <div class="slider"><div class="track"><div class="fill" style="width:30%"></div><div class="dot" style="left:30%"></div></div></div>
+          <span class="val">0.15</span></div>
+        <div class="row"><span class="lab">LFO Depth</span>
+          <div class="slider"><div class="track"><div class="fill" style="width:30%"></div><div class="dot" style="left:30%"></div></div></div>
+          <span class="val">0.15</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Features ===== -->
+<section id="features">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="sec-tag">Features</div>
+      <h2 data-i18n="feat.h2">Built for weird, gritty texture</h2>
+      <p data-i18n="feat.p">Everything you need to turn a recording into a living cloud of bent, stretched, random particles.</p>
+    </div>
+    <div class="features">
+      <div class="feature reveal">
+        <div class="num">01</div>
+        <h3 data-i18n="feat.1.h">Record &amp; Playhead</h3>
+        <p data-i18n="feat.1.p">PARTICULA records the input, then plays a wandering playhead back through it. Each grain is a slice of that recording, replayed at its own time and position.</p>
+        <div class="k"><span data-i18n="feat.1.k1">Record</span><span data-i18n="feat.1.k2">Playhead</span><span data-i18n="feat.1.k3">Grains</span></div>
+      </div>
+      <div class="feature reveal">
+        <div class="num">02</div>
+        <h3 data-i18n="feat.2.h">I · Spawn</h3>
+        <p data-i18n="feat.2.p">Interval fires a new particle at a set rate; Pool caps how many particles live at once; Fallback writes each grain back into the recorded history. Every particle gets a random lifetime.</p>
+        <div class="k"><span data-i18n="feat.2.k1">Interval</span><span data-i18n="feat.2.k2">Pool</span><span data-i18n="feat.2.k3">Fallback</span></div>
+      </div>
+      <div class="feature reveal">
+        <div class="num">03</div>
+        <h3 data-i18n="feat.3.h">I · Movement</h3>
+        <p data-i18n="feat.3.p">Particle position isn't fixed — it wanders. Fixed holds still, LFO lets an oscillator drive it, Walk takes a random stroll, and Peak hunts for the nearest loud spot.</p>
+        <div class="k"><span data-i18n="feat.3.k1">Fixed</span><span data-i18n="feat.3.k2">LFO</span><span data-i18n="feat.3.k3">Walk</span><span data-i18n="feat.3.k4">Peak</span></div>
+      </div>
+      <div class="feature reveal">
+        <div class="num">04</div>
+        <h3 data-i18n="feat.4.h">Stretch · Pitch · Shift</h3>
+        <p data-i18n="feat.4.p">Every grain time-stretches the source by a fixed value, while an LFO drives its pitch and frequency shifts — bending the recording into something abstract.</p>
+        <div class="k"><span data-i18n="feat.4.k1">Stretch</span><span data-i18n="feat.4.k2">Pitch</span><span data-i18n="feat.4.k3">Shift</span></div>
+      </div>
+      <div class="feature reveal">
+        <div class="num">05</div>
+        <h3 data-i18n="feat.5.h">Wet / Dry</h3>
+        <p data-i18n="feat.5.p">Blend your dry signal with the textured cloud. Ride the mix from a faint whisper of grit to a fully saturated wash.</p>
+        <div class="k"><span data-i18n="feat.5.k1">Mix</span><span data-i18n="feat.5.k2">Blend</span><span data-i18n="feat.5.k3">Dirt</span></div>
+      </div>
+      <div class="feature reveal">
+        <div class="num">06</div>
+        <h3 data-i18n="feat.6.h">Made for Experimentation</h3>
+        <p data-i18n="feat.6.p">A CLAP plugin for Windows, open source on GitHub under MPL-2.0 — and completely free. Designed to be pressed, randomized, and misused.</p>
+        <div class="k"><span>CLAP</span><span>Windows</span><span>MPL-2.0</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CTA ===== -->
+<section class="cta">
+  <div class="wrap">
+    <h2 class="reveal" data-i18n="cta.h2">Randomize everything</h2>
+    <p class="reveal" data-i18n="cta.p">A granular-cloud signal engine · CLAP · Windows · MPL-2.0 · by I Am Plugins · v0.1.0</p>
+    <div class="price reveal" data-i18n="cta.price">Price: Free — open source under MPL-2.0.</div>
+    <div class="btns reveal">
+      <a href="https://github.com/IAMMRGODIE/Particula" target="_blank" rel="noopener" class="btn solid" data-i18n="cta.btn1">Get Particula</a>
+      <a href="#features" class="btn ghost" data-i18n="cta.btn2">Explore Features</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Footer ===== -->
+<footer>
+  <div class="wrap foot">
+    <div class="left">
+      <span>© 2024 I Am Plugins</span>
+      <a href="#">Particula v0.1.0</a>
+      <a href="https://github.com/IAMMRGODIE/Particula" target="_blank" rel="noopener">GitHub · MPL-2.0</a>
+    </div>
+    <div data-i18n="foot.mid">CLAP · Windows · a granular-cloud signal engine</div>
+    <a href="#" data-i18n="foot.top">Back to top ↑</a>
+  </div>
+</footer>
+
+<script>
+/* ================= i18n ================= */
+const I18N = {
+  en: {
+    "nav.engine":"Engine", "nav.modules":"Modules", "nav.features":"Features", "nav.get":"Get Particula",
+    "hero.eyebrow":"A Granular-Cloud Signal Engine", "hero.sub":"Record a sound, scatter it into particles, and reshape it into dirt.",
+    "hero.byline":"a granular-cloud signal engine · by I Am Plugins — version 0.1.0",
+    "hero.cta1":"Explore the Engine", "hero.cta2":"Features", "hero.scroll":"Scroll",
+    "stat.1":"Plugin Format", "stat.2":"Windows Only", "stat.3":"Open Source · GitHub", "stat.4":"First Release",
+    "eng.h2":"Record it. Scatter it. Get dirt.",
+    "eng.p1":"PARTICULA is a granular-cloud signal engine. It records whatever you feed it, then plays a wandering playhead back through that recording as a cloud of particles. Every grain is time-stretched — a fixed value — while its pitch and frequency are bent by an LFO. And each particle is written back into the history, so the cloud feeds on itself and grows into an abstract, gritty texture.",
+    "eng.p2":"Particles are fired at a set interval, drawn from a pool, and given a random lifetime. No two runs are ever the same — and that's the point. This is a tool built for random sounds and experimental sound design.",
+    "eng.s1":"Real-time grain counter", "eng.s2":"Particles in the cloud", "eng.s3":"Full mix control", "eng.s4":"Instant activation",
+    "eng.badge":"LIVE · PARTICLE CLOUD",
+    "mod.h2":"How the cloud is born & moves", "mod.p":"Two modules govern the grain cloud. Spawn decides when particles fire and how many live; Movement decides where each particle sits and drifts.",
+    
+    
+    
+    "feat.h2":"Built for weird, gritty texture",
+    "feat.p":"Everything you need to turn a recording into a living cloud of bent, stretched, random particles.",
+    "feat.1.h":"Record & Playhead", "feat.1.p":"PARTICULA records the input, then plays a wandering playhead back through it. Each grain is a slice of that recording, replayed at its own time and position.","feat.1.k1":"Record","feat.1.k2":"Playhead","feat.1.k3":"Grains",
+    "feat.2.h":"I · Spawn", "feat.2.p":"Interval fires a new particle at a set rate; Pool caps how many particles live at once; Fallback writes each grain back into the recorded history. Every particle gets a random lifetime.","feat.2.k1":"Interval","feat.2.k2":"Pool","feat.2.k3":"Fallback",
+    "feat.3.h":"I · Movement", "feat.3.p":"Particle position isn't fixed — it wanders. Fixed holds still, LFO lets an oscillator drive it, Walk takes a random stroll, and Peak hunts for the nearest loud spot.","feat.3.k1":"Fixed","feat.3.k2":"LFO","feat.3.k3":"Walk","feat.3.k4":"Peak",
+    "feat.4.h":"Stretch · Pitch · Shift", "feat.4.p":"Every grain time-stretches the source by a fixed value, while an LFO drives its pitch and frequency shifts — bending the recording into something abstract.","feat.4.k1":"Stretch","feat.4.k2":"Pitch","feat.4.k3":"Shift",
+    "feat.5.h":"Wet / Dry", "feat.5.p":"Blend your dry signal with the textured cloud. Ride the mix from a faint whisper of grit to a fully saturated wash.","feat.5.k1":"Mix","feat.5.k2":"Blend","feat.5.k3":"Dirt",
+    "feat.6.h":"Made for Experimentation", "feat.6.p":"A CLAP plugin for Windows, open source on GitHub under MPL-2.0 — and completely free. Designed to be pressed, randomized, and misused.",
+    "cta.h2":"Randomize everything", "cta.p":"A granular-cloud signal engine · CLAP · Windows · MPL-2.0 · by I Am Plugins · v0.1.0",
+    "cta.price":"Price: $000,000,000.00 — free, open source under MPL-2.0.", "cta.btn1":"Get Particula", "cta.btn2":"Explore Features",
+    "foot.mid":"CLAP · Windows · a granular-cloud signal engine", "foot.top":"Back to top ↑"
+  },
+  zh: {
+    "nav.engine":"引擎", "nav.modules":"模块", "nav.features":"功能", "nav.get":"获取 Particula",
+    "hero.eyebrow":"颗粒云信号引擎", "hero.sub":"录制一段声音，打散成粒子，重塑成「泥土」般的质感。",
+    "hero.byline":"颗粒云信号引擎 · by I Am Plugins — 版本 0.1.0",
+    "hero.cta1":"探索引擎", "hero.cta2":"功能", "hero.scroll":"滚动",
+    "stat.1":"插件格式", "stat.2":"仅 Windows", "stat.3":"开源 · GitHub", "stat.4":"首发版本",
+    "eng.h2":"录制它。打散它。得到泥土。",
+    "eng.p1":"PARTICULA 是一个颗粒云信号引擎。它先录入你给它的任何声音，再把一个游走的播放头以粒子云的形式回放这段录音。每个粒子都做固定值的时间拉伸，同时由 LFO 弯曲其音高与频率。并且每个粒子都被写回历史，于是云以自身为食，长成一种抽象而粗粝的质感。",
+    "eng.p2":"粒子按设定的间隔发射，取自一个池子，并带有随机的生命周期。没有两次运行完全相同——这正是重点。这是一个为随机声音与实验性声音设计而生的工具。",
+    "eng.s1":"实时粒子计数", "eng.s2":"云中的粒子", "eng.s3":"完全混合控制", "eng.s4":"即时激活",
+    "eng.badge":"LIVE · 粒子云",
+    "mod.h2":"粒子云如何诞生与运动", "mod.p":"两个模块掌控粒子云。「生成」决定粒子何时发射、有多少存活；「运动」决定每个粒子的位置与漂移。",
+    
+    
+    
+    "feat.h2":"为怪诞粗粝的质感而生",
+    "feat.p":"把一段录音变成由弯曲、拉伸、随机粒子构成的活云，所需的一切。",
+    "feat.1.h":"录音与播放头", "feat.1.p":"PARTICULA 先录入输入，再用一个游走的播放头回放它。每个粒子都是录音的一个切片，在各自的时间与位置上被重播。","feat.1.k1":"录音","feat.1.k2":"播放头","feat.1.k3":"粒子",
+    "feat.2.h":"I · SPAWN", "feat.2.p":"「间隔」按设定速率发射新粒子；「池」限制同时存活的粒子数；「回退」把每个粒子写回录音历史。每个粒子都有随机的生命时长。","feat.2.k1":"间隔","feat.2.k2":"池","feat.2.k3":"回退",
+    "feat.3.h":"I · MOVEMENT", "feat.3.p":"粒子位置并不固定，而是会漂移。「固定」保持静止，「LFO」由振荡器驱动，「游走」随机漫步，「峰值」寻找附近最响的位置。","feat.3.k1":"固定","feat.3.k2":"LFO","feat.3.k3":"游走","feat.3.k4":"峰值",
+    "feat.4.h":"拉伸 · 音高 · 频移", "feat.4.p":"每个粒子把源信号按固定值做时间拉伸，同时由 LFO 驱动音高与频率偏移，把录音弯曲成某种抽象的东西。","feat.4.k1":"拉伸","feat.4.k2":"音高","feat.4.k3":"频移",
+    "feat.5.h":"湿 / 干", "feat.5.p":"把干信号与质感云混合，从一丝微弱的沙砾感到完全饱和的涂抹。","feat.5.k1":"混合","feat.5.k2":"混合","feat.5.k3":"泥土",
+    "feat.6.h":"为实验而生", "feat.6.p":"一个 Windows 上的 CLAP 插件，以 MPL-2.0 协议在 GitHub 开源，完全免费。为被按压、被随机化、被「滥用」而设计。",
+    "cta.h2":"随机化一切", "cta.p":"颗粒云信号引擎 · CLAP · Windows · MPL-2.0 · by I Am Plugins · v0.1.0",
+    "cta.price":"定价：$000,000,000.00 —— 免费，以 MPL-2.0 协议开源。", "cta.btn1":"获取 Particula", "cta.btn2":"探索功能",
+    "foot.mid":"CLAP · Windows · 颗粒云信号引擎", "foot.top":"回到顶部 ↑"
+  }
+};
+let LANG = localStorage.getItem('particula-lang') || 'en';
+function applyI18n(){
+  const dict = I18N[LANG] || I18N.en;
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const v = dict[el.getAttribute('data-i18n')];
+    if(v !== undefined) el.textContent = v;
+  });
+  document.documentElement.lang = LANG === 'zh' ? 'zh-CN' : 'en';
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('on', b.dataset.lang === LANG));
+}
+function setLang(l){ LANG = l; localStorage.setItem('particula-lang', l); applyI18n(); }
+document.querySelectorAll('.lang-btn').forEach(b => b.addEventListener('click', () => setLang(b.dataset.lang)));
+applyI18n();
+
+/* ================= generative particle viz =================
+   Simulates the plugin: concentric circles rotate (inner faster,
+   outer slower). White dots ride the rings; brightness tracks each
+   particle's life state, and the dot disappears when it dies. */
+function createViz(canvas, opts){
+  const ctx = canvas.getContext('2d');
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  let W = 0, H = 0, cx = 0, cy = 0;
+  function resize(){
+    const r = canvas.parentElement.getBoundingClientRect();
+    W = canvas.width = r.width * dpr;
+    H = canvas.height = r.height * dpr;
+    cx = W/2; cy = H/2;
+  }
+  const TWO = Math.PI * 2;
+  let s = opts.seed || 1;
+  function rnd(){ s = (s * 16807) % 2147483647; return (s - 1) / 2147483646; }
+
+  const ringDefs = (opts.rings || 3) >= 4 ? [0.34, 0.52, 0.70, 0.88] : [0.40, 0.62, 0.85];
+  const k = opts.speed || 0.12;
+  const dir = opts.dir || 1;
+  const rings = ringDefs.map(rad => ({ rad, angle: rnd() * TWO, speed: (k / rad) * dir }));
+
+  const perRing = opts.perRing || 4;
+  function spawn(ring){ return { ring, off: rnd() * TWO, life: rnd() * 0.25, maxLife: 0.7 + rnd() * 1.5 }; }
+  const parts = [];
+  ringDefs.forEach((rad, r) => { for(let i=0;i<perRing;i++) parts.push(spawn(r)); });
+
+  let last = performance.now();
+  function frame(now){
+    const dt = Math.min(0.05, (now - last) / 1000); last = now;
+    ctx.clearRect(0, 0, W, H);
+    const scale = Math.min(W, H);
+
+    rings.forEach(r => {
+      ctx.lineWidth = 0.5 * dpr;
+      ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+      ctx.beginPath(); ctx.arc(cx, cy, r.rad * scale, 0, TWO); ctx.stroke();
+      const nx = cx + Math.cos(r.angle) * r.rad * scale;
+      const ny = cy + Math.sin(r.angle) * r.rad * scale;
+      ctx.beginPath(); ctx.arc(nx, ny, 1.4 * dpr, 0, TWO);
+      ctx.fillStyle = 'rgba(255,255,255,0.30)'; ctx.fill();
+    });
+
+    const live = [];
+    parts.forEach((p, i) => {
+      p.life += dt / p.maxLife;
+      if(p.life >= 1){ parts[i] = spawn(p.ring); return; }
+      let a;
+      if(p.life < 0.18) a = p.life / 0.18;
+      else if(p.life > 0.72) a = (1 - p.life) / 0.28;
+      else a = 1;
+      const ang = rings[p.ring].angle + p.off;
+      const rad = rings[p.ring].rad * scale * (1 + 0.004 * Math.sin(p.life * Math.PI));
+      const x = cx + Math.cos(ang) * rad, y = cy + Math.sin(ang) * rad;
+      ctx.beginPath(); ctx.arc(x, y, (1.2 + a * 1.7) * dpr, 0, TWO);
+      ctx.fillStyle = 'rgba(255,255,255,' + (a * 0.92) + ')';
+      ctx.fill();
+      live.push({ x, y, a });
+    });
+
+    ctx.lineWidth = 0.5 * dpr;
+    for(let i=0;i<live.length;i++){
+      for(let j=i+1;j<live.length;j++){
+        const dx = live[i].x - live[j].x, dy = live[i].y - live[j].y;
+        const d = Math.hypot(dx, dy);
+        if(d < scale * 0.3){
+          const o = (1 - d / (scale * 0.3)) * Math.min(live[i].a, live[j].a);
+          ctx.beginPath(); ctx.moveTo(live[i].x, live[i].y); ctx.lineTo(live[j].x, live[j].y);
+          ctx.strokeStyle = 'rgba(255,255,255,' + (0.03 + o * 0.12) + ')'; ctx.stroke();
+        }
+      }
+    }
+
+    const pulse = 0.5 + 0.5 * Math.sin(now * 0.0012);
+    ctx.beginPath(); ctx.arc(cx, cy, scale * 0.085, 0, TWO);
+    ctx.strokeStyle = 'rgba(255,255,255,0.22)'; ctx.lineWidth = 0.6 * dpr; ctx.stroke();
+    ctx.beginPath(); ctx.arc(cx, cy, 3 * dpr, 0, TWO); ctx.fillStyle = '#fff'; ctx.fill();
+    ctx.beginPath(); ctx.arc(cx, cy, scale * 0.2, 0, TWO);
+    ctx.fillStyle = 'rgba(255,255,255,' + (0.015 + pulse * 0.015) + ')'; ctx.fill();
+
+    rings.forEach(r => { r.angle += r.speed * dt; });
+    requestAnimationFrame(frame);
+  }
+  resize();
+  window.addEventListener('resize', resize);
+  requestAnimationFrame(frame);
+  return { resize };
+}
+
+const heroC = document.getElementById('viz');
+createViz(heroC, { seed: 7, rings: 4, speed: 0.10 });
+const engC = document.getElementById('engineViz');
+createViz(engC, { seed: 19, rings: 3, speed: 0.14 });
+
+window.addEventListener('scroll', () => {
+  heroC.style.transform = 'translateY(' + (window.scrollY * 0.18) + 'px)';
+}, { passive: true });
+
+/* ---------- Scroll reveal ---------- */
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} });
+},{ threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+/* ---------- Header background on scroll ---------- */
+const header = document.querySelector('header.site');
+window.addEventListener('scroll', ()=>{
+  header.style.background = window.scrollY > 10 ? 'linear-gradient(to bottom,rgba(5,5,5,.98),rgba(5,5,5,0))' : 'linear-gradient(to bottom,rgba(5,5,5,.92),rgba(5,5,5,0))';
+}, { passive: true });
+</script>
+</body>
+</html>

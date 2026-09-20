@@ -1,12 +1,10 @@
-<!-- Yeah, this page is made by deepseek -->
-<!-- 确实，这是 AI 帮我写的玩意 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>PARTICULA — A Granular-Cloud Signal Engine</title>
-<meta name="description" content="PARTICULA by I Am Plugins is a granular-cloud signal engine: it records your input, scatters it into particles that are time-stretched and pitch/frequency-shifted by an LFO, then writes them back into an abstract, gritty texture. CLAP · Windows · MPL-2.0 · v0.1.0." />
+<meta name="description" content="PARTICULA by I Am Plugins is a granular-cloud signal engine: it records your input, scatters it into particles that are time-stretched and pitch/frequency-shifted by an LFO, then writes them back into an abstract, gritty texture. CLAP · VST3 · Windows · MPL-2.0 · v0.1.0." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Space+Mono:wght@400;700&family=Noto+Serif+SC:wght@500;600&family=Noto+Sans+SC:wght@400;500&family=Noto+Sans+Mono+SC:wght@400;500&display=swap" rel="stylesheet" />
@@ -228,7 +226,7 @@
 <!-- ===== Stats ===== -->
 <div class="stats">
   <div class="grid">
-    <div class="stat"><div class="v">CLAP</div><div class="l" data-i18n="stat.1">Plugin Format</div></div>
+    <div class="stat"><div class="v">CLAP · VST3</div><div class="l" data-i18n="stat.1">Plugin Formats</div></div>
     <div class="stat"><div class="v">Win</div><div class="l" data-i18n="stat.2">Windows Only</div></div>
     <div class="stat"><div class="v">MPL-2.0</div><div class="l" data-i18n="stat.3">Open Source · GitHub</div></div>
     <div class="stat"><div class="v">v0.1.0</div><div class="l" data-i18n="stat.4">First Release</div></div>
@@ -361,8 +359,8 @@
       <div class="feature reveal">
         <div class="num">06</div>
         <h3 data-i18n="feat.6.h">Made for Experimentation</h3>
-        <p data-i18n="feat.6.p">A CLAP plugin for Windows, open source on GitHub under MPL-2.0 — and completely free. Designed to be pressed, randomized, and misused.</p>
-        <div class="k"><span>CLAP</span><span>Windows</span><span>MPL-2.0</span></div>
+        <p data-i18n="feat.6.p">A CLAP & VST3 plugin for Windows, open source on GitHub under MPL-2.0 — and completely free. Designed to be pressed, randomized, and misused.</p>
+        <div class="k"><span>CLAP</span><span>VST3</span><span>Windows</span><span>MPL-2.0</span></div>
       </div>
     </div>
   </div>
@@ -372,7 +370,7 @@
 <section class="cta">
   <div class="wrap">
     <h2 class="reveal" data-i18n="cta.h2">Randomize everything</h2>
-    <p class="reveal" data-i18n="cta.p">A granular-cloud signal engine · CLAP · Windows · MPL-2.0 · by I Am Plugins · v0.1.0</p>
+    <p class="reveal" data-i18n="cta.p">A granular-cloud signal engine · CLAP · VST3 · Windows · MPL-2.0 · by I Am Plugins · v0.1.0</p>
     <div class="price reveal" data-i18n="cta.price">Price: Free — open source under MPL-2.0.</div>
     <div class="btns reveal">
       <a href="https://github.com/IAMMRGODIE/Particula" target="_blank" rel="noopener" class="btn solid" data-i18n="cta.btn1">Get Particula</a>
@@ -389,7 +387,7 @@
       <a href="#">Particula v0.1.0</a>
       <a href="https://github.com/IAMMRGODIE/Particula" target="_blank" rel="noopener">GitHub · MPL-2.0</a>
     </div>
-    <div data-i18n="foot.mid">CLAP · Windows · a granular-cloud signal engine</div>
+    <div data-i18n="foot.mid">CLAP · VST3 · Windows · a granular-cloud signal engine</div>
     <a href="#" data-i18n="foot.top">Back to top ↑</a>
   </div>
 </footer>
@@ -402,7 +400,7 @@ const I18N = {
     "hero.eyebrow":"A Granular-Cloud Signal Engine", "hero.sub":"Record a sound, scatter it into particles, and reshape it into dirt.",
     "hero.byline":"a granular-cloud signal engine · by I Am Plugins — version 0.1.0",
     "hero.cta1":"Explore the Engine", "hero.cta2":"Features", "hero.scroll":"Scroll",
-    "stat.1":"Plugin Format", "stat.2":"Windows Only", "stat.3":"Open Source · GitHub", "stat.4":"First Release",
+    "stat.1":"Plugin Formats", "stat.2":"Windows Only", "stat.3":"Open Source · GitHub", "stat.4":"First Release",
     "eng.h2":"Record it. Scatter it. Get dirt.",
     "eng.p1":"PARTICULA is a granular-cloud signal engine. It records whatever you feed it, then plays a wandering playhead back through that recording as a cloud of particles. Every grain is time-stretched — a fixed value — while its pitch and frequency are bent by an LFO. And each particle is written back into the history, so the cloud feeds on itself and grows into an abstract, gritty texture.",
     "eng.p2":"Particles are fired at a set interval, drawn from a pool, and given a random lifetime. No two runs are ever the same — and that's the point. This is a tool built for random sounds and experimental sound design.",
@@ -419,10 +417,10 @@ const I18N = {
     "feat.3.h":"I · Movement", "feat.3.p":"Particle position isn't fixed — it wanders. Fixed holds still, LFO lets an oscillator drive it, Walk takes a random stroll, and Peak hunts for the nearest loud spot.","feat.3.k1":"Fixed","feat.3.k2":"LFO","feat.3.k3":"Walk","feat.3.k4":"Peak",
     "feat.4.h":"Stretch · Pitch · Shift", "feat.4.p":"Every grain time-stretches the source by a fixed value, while an LFO drives its pitch and frequency shifts — bending the recording into something abstract.","feat.4.k1":"Stretch","feat.4.k2":"Pitch","feat.4.k3":"Shift",
     "feat.5.h":"Wet / Dry", "feat.5.p":"Blend your dry signal with the textured cloud. Ride the mix from a faint whisper of grit to a fully saturated wash.","feat.5.k1":"Mix","feat.5.k2":"Blend","feat.5.k3":"Dirt",
-    "feat.6.h":"Made for Experimentation", "feat.6.p":"A CLAP plugin for Windows, open source on GitHub under MPL-2.0 — and completely free. Designed to be pressed, randomized, and misused.",
-    "cta.h2":"Randomize everything", "cta.p":"A granular-cloud signal engine · CLAP · Windows · MPL-2.0 · by I Am Plugins · v0.1.0",
+    "feat.6.h":"Made for Experimentation", "feat.6.p":"A CLAP & VST3 plugin for Windows, open source on GitHub under MPL-2.0 — and completely free. Designed to be pressed, randomized, and misused.",
+    "cta.h2":"Randomize everything", "cta.p":"A granular-cloud signal engine · CLAP · VST3 · Windows · MPL-2.0 · by I Am Plugins · v0.1.0",
     "cta.price":"Price: $000,000,000.00 — free, open source under MPL-2.0.", "cta.btn1":"Get Particula", "cta.btn2":"Explore Features",
-    "foot.mid":"CLAP · Windows · a granular-cloud signal engine", "foot.top":"Back to top ↑"
+    "foot.mid":"CLAP · VST3 · Windows · a granular-cloud signal engine", "foot.top":"Back to top ↑"
   },
   zh: {
     "nav.engine":"引擎", "nav.modules":"模块", "nav.features":"功能", "nav.get":"获取 Particula",
@@ -446,10 +444,10 @@ const I18N = {
     "feat.3.h":"I · MOVEMENT", "feat.3.p":"粒子位置并不固定，而是会漂移。「固定」保持静止，「LFO」由振荡器驱动，「游走」随机漫步，「峰值」寻找附近最响的位置。","feat.3.k1":"固定","feat.3.k2":"LFO","feat.3.k3":"游走","feat.3.k4":"峰值",
     "feat.4.h":"拉伸 · 音高 · 频移", "feat.4.p":"每个粒子把源信号按固定值做时间拉伸，同时由 LFO 驱动音高与频率偏移，把录音弯曲成某种抽象的东西。","feat.4.k1":"拉伸","feat.4.k2":"音高","feat.4.k3":"频移",
     "feat.5.h":"湿 / 干", "feat.5.p":"把干信号与质感云混合，从一丝微弱的沙砾感到完全饱和的涂抹。","feat.5.k1":"混合","feat.5.k2":"混合","feat.5.k3":"泥土",
-    "feat.6.h":"为实验而生", "feat.6.p":"一个 Windows 上的 CLAP 插件，以 MPL-2.0 协议在 GitHub 开源，完全免费。为被按压、被随机化、被「滥用」而设计。",
-    "cta.h2":"随机化一切", "cta.p":"颗粒云信号引擎 · CLAP · Windows · MPL-2.0 · by I Am Plugins · v0.1.0",
+    "feat.6.h":"为实验而生", "feat.6.p":"一个 Windows 上的 CLAP / VST3 插件，以 MPL-2.0 协议在 GitHub 开源，完全免费。为被按压、被随机化、被「滥用」而设计。",
+    "cta.h2":"随机化一切", "cta.p":"颗粒云信号引擎 · CLAP · VST3 · Windows · MPL-2.0 · by I Am Plugins · v0.1.0",
     "cta.price":"定价：$000,000,000.00 —— 免费，以 MPL-2.0 协议开源。", "cta.btn1":"获取 Particula", "cta.btn2":"探索功能",
-    "foot.mid":"CLAP · Windows · 颗粒云信号引擎", "foot.top":"回到顶部 ↑"
+    "foot.mid":"CLAP · VST3 · Windows · 颗粒云信号引擎", "foot.top":"回到顶部 ↑"
   }
 };
 let LANG = localStorage.getItem('particula-lang') || 'en';
